@@ -3,7 +3,7 @@ from tkinter import Tk, ttk, filedialog
 
 senha_gammon, senha_faculdade, pathcsv = "Gammon21#", "Fagammon21#", "c:/users/public/desktop/users.csv"
 
-def viewplanilha(num_colunas, lerarq):
+def viewplanilha(num_colunas, linhas):
     num_colunas += 2
     colunas = []
 
@@ -17,10 +17,14 @@ def viewplanilha(num_colunas, lerarq):
 
     for x in range(2, num_colunas):
         veja.column(str(x), width=200, minwidth=50, stretch=0)
-        veja.heading("#" + str(x), text=lerarq[0].split(",")[x - 2])
+        veja.heading("#" + str(x), text=linhas[0].split(",")[x - 2])
 
-    for x in range(1, len(lerarq)):
-        veja.insert("", "end", values=(str(x) + "," + lerarq[x]).split(","))
+    for x in range(1, len(linhas)):
+
+        while linhas[x].find(",,") > -1:
+            linhas[x] = linhas[x].replace(",,", ",")
+
+        veja.insert("", "end", values=(str(x) + "," + linhas[x]).split(","))
 
     veja.grid(row=0, column=0)
 
@@ -118,7 +122,8 @@ def qualfunc(este):
    
 def priopc():
     global pathcsv
-    cabecalho = ["First Name [Required]", "Last Name [Required]", "Email Address [Required]", "Password [Required]", "Org Unit Path [Required]", "Change Password at Next Sign-In", "New Status [UPLOAD ONLY]"]
+    cabecalho = ["First Name [Required]","Last Name [Required]","Email Address [Required]","Password [Required]","Password Hash Function [UPLOAD ONLY]","Org Unit Path [Required]","New Primary Email [UPLOAD ONLY]","Recovery Email","Home Secondary Email","Work Secondary Email","Recovery Phone [MUST BE IN THE E.164 FORMAT]","Work Phone","Home Phone","Mobile Phone","Work Address","Home Address","Employee ID","Employee Type","Employee Title","Manager Email","Department","Cost Center","Building ID","Floor Name","Floor Section","Change Password at Next Sign-In","New Status [UPLOAD ONLY]","New Licenses [UPLOAD ONLY]","Advanced Protection Program enrollment\n"]
+    # cabecalho = ["First Name [Required]", "Last Name [Required]", "Email Address [Required]", "Password [Required]", "Org Unit Path [Required]", "Change Password at Next Sign-In", "New Status [UPLOAD ONLY]"]
     lista, sobrenome, email, senha, mudar_senha, org_unid = [], [], [], [], [], []
     # nome = ["LUIZ THADEU SERAFIM", "GUSTAVO BORGES", "ALFREDO DE MESQUITA BARBOSA", "PEDRO PABLO DA SILVA", "MARCO ANTÔNIO SILVEIRA", "PEDRO COIMBRA", "AMAURI DA COSTA SANTOS"]
 
@@ -131,6 +136,9 @@ def priopc():
         lerarq.close()
 
         nome = nome.split("\n")
+
+        if nome[-1] == "" :
+            nome.pop()
 
         # if nome[0].find(",") > -1:
         #     for x in range(len(nome)):
@@ -233,14 +241,29 @@ def priopc():
         if len(nome) > 1 and o1 == "N":
             o1 = VF("Todos os usuários vão ser da mesma unidade organizacional?(S/N)")
 
+    lerarq = ",".join(cabecalho)
+    # lerarq = open(pathcsv, mode="r", encoding="utf8").readlines()
+    lista = ["","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]
+
+    for x in range(len(nome)):
+        lista[0] = nome[x]
+        lista[1] = sobrenome[x]
+        lista[2] = email[x]
+        lista[3] = senha[x]
+        lista[5] = org_unid[x]
+        lista[25] = mudar_senha[x]
+        # csv.write(",".join(lista) + "\n")
+        lerarq = lerarq + ",".join(lista) + "\n"
+
+    lista.clear()
+    lista.append(",".join(cabecalho[:4]) + "," + cabecalho[5] + "," + cabecalho[25])
+    lista += lerarq.split("\n")[1:-1]
+    viewplanilha(6, lista)
     csv = filedialog.asksaveasfilename(initialdir=path.dirname(pathcsv), defaultextension=".csv", filetypes=[("Arquivos CSV", ".csv")], initialfile="users.csv")
     csv = open(csv, mode="w", encoding="utf8")
     pathcsv = csv.name
-    csv.write(",".join(cabecalho) + "\n")
-
-    for x in range(len(nome)):
-        csv.write(nome[x] + "," + sobrenome[x] + "," + email[x] + "," + senha[x] + "," + org_unid[x] + "," + mudar_senha[x] + "\n")
-
+    # csv.write(",".join(cabecalho) + "\n")
+    csv.write(lerarq)
     csv.close()
 
     return ""#nome + sobrenome + email + senha + mudar_senha + org_unid# + nome_minusc
@@ -256,5 +279,3 @@ opcao = validarint(
 )
 
 qualfunc(opcao)
-lerarq = open(pathcsv, mode="r", encoding="utf8").readlines()
-viewplanilha(6, lerarq)
