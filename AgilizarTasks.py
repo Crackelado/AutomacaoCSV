@@ -1,7 +1,7 @@
 from os import path
 from tkinter import Tk, ttk, filedialog
 
-senha_gammon, senha_faculdade, pathcsv = "Gammon21#", "Fagammon21#", "c:/users/public/desktop/users.csv"
+senha_gammon, senha_faculdade, pathcsv = "Gammon22#", "Fagammon22#", "c:/users/public/desktop/users.csv"
 
 def viewplanilha(num_colunas, linhas):
     num_colunas += 2
@@ -11,6 +11,7 @@ def viewplanilha(num_colunas, linhas):
         colunas.append(str(x))
 
     janela = Tk()
+    # janela.title("Python")
     veja = ttk.Treeview(janela, selectmode="browse", columns=(colunas), show="headings")
     veja.column("1", width=30, minwidth=50, stretch=0)
     veja.heading("#1", text="")
@@ -27,7 +28,15 @@ def viewplanilha(num_colunas, linhas):
         veja.insert("", "end", values=(str(x) + "," + linhas[x]).split(","))
 
     veja.grid(row=0, column=0)
-
+    # janela.tk_focusNext()
+    # janela.title("Abrir")
+    # janela.deiconify()
+    # janela.lift()
+    # janela.call('wm', 'attributes', '.', '-topmost', True)
+    # janela.after_idle(self.root.call, 'wm', 'attributes', '.', '-topmost', False)
+    # janela.attributes("-topmost", True)
+    # janela.focus_force()
+    # janela.attributes("-topmost", 0)
     janela.mainloop()
     
 def removeracento(palavra):
