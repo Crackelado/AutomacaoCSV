@@ -129,6 +129,18 @@ def qualfunc(este):
     else:
         print("Nenhuma opção correta foi atingida")
    
+def leituraarq(Atalho):
+    verarq = filedialog.askopenfilename(filetypes=[("Arquivo Texto (.txt)", ".txt"), ("Arquivo CSV (.csv)", ".csv")], initialdir=path.dirname(Atalho))
+    verarq = open(verarq, mode="r", encoding="utf8")
+    tnome = verarq.read().upper()
+    verarq.close()
+    tnome = tnome.split("\n")
+
+    if tnome[-1] == "":
+        tnome.pop()
+
+    return tnome
+
 def priopc():
     global pathcsv
     cabecalho = ["First Name [Required]","Last Name [Required]","Email Address [Required]","Password [Required]","Password Hash Function [UPLOAD ONLY]","Org Unit Path [Required]","New Primary Email [UPLOAD ONLY]","Recovery Email","Home Secondary Email","Work Secondary Email","Recovery Phone [MUST BE IN THE E.164 FORMAT]","Work Phone","Home Phone","Mobile Phone","Work Address","Home Address","Employee ID","Employee Type","Employee Title","Manager Email","Department","Cost Center","Building ID","Floor Name","Floor Section","Change Password at Next Sign-In","New Status [UPLOAD ONLY]","New Licenses [UPLOAD ONLY]","Advanced Protection Program enrollment\n"]
@@ -139,15 +151,17 @@ def priopc():
     a = VF("Gostaria de abrir arquivo salvo com nomes? (S/N)")
 
     if a == "S":
-        lerarq = filedialog.askopenfilename(filetypes=[("Arquivo Texto (.txt)", ".txt"), ("Arquivo CSV (.csv)", ".csv")], initialdir=path.dirname(pathcsv))
-        lerarq = open(lerarq, mode="r", encoding="utf8")
-        nome = lerarq.read().upper()
-        lerarq.close()
+        # lerarq = filedialog.askopenfilename(filetypes=[("Arquivo Texto (.txt)", ".txt"), ("Arquivo CSV (.csv)", ".csv")], initialdir=path.dirname(pathcsv))
+        # lerarq = open(lerarq, mode="r", encoding="utf8")
+        # nome = lerarq.read().upper()
+        # lerarq.close()
 
-        nome = nome.split("\n")
+        # nome = nome.split("\n")
 
-        if nome[-1] == "" :
-            nome.pop()
+        # if nome[-1] == "" :
+        #     nome.pop()
+
+        nome = leituraarq(pathcsv)
 
         # if nome[0].find(",") > -1:
         #     for x in range(len(nome)):
@@ -177,8 +191,12 @@ def priopc():
     s = VF("Mudar senha no próximo login?(S/N)")
 
     o1 = "N"
+    b = VF("Gostaria de abrir arquivo salvo com números de matrícula? (S/N)")
 
-    for x in range(len(nome)):
+    if b == "S":
+        lista = leituraarq(pathcsv)
+
+    for  x in range(len(nome)):
         if s == "S":
             mudar_senha.append("TRUE")
         elif s == "N":
@@ -202,9 +220,11 @@ def priopc():
                     a = validarint(msgescolha, "Escolha inválida", 1, 3)
                     a += 3
 
-
             if o == 1:
-                z = input("Digite o código do aluno: ")
+                if b == "S":
+                    z = lista[x]
+                elif b == "N":
+                    z = input("Digite o código do aluno: ")
 
                 try:
                     z = int(z)
